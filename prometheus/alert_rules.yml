@@ -1,0 +1,37 @@
+groups:
+  - name: system.rules
+    rules:
+      - alert: HighCPUUsage
+        expr: (100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100)) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage > 80% for 2 minutes"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "RAM usage > 85% for 2 minutes"
+
+      - alert: NginxDown
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx is down on {{ $labels.instance }}"
+
+      - alert: HTTPProbeFailed
+        expr: probe_success == 0
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "HTTP probe failed"
+          description: "Blackbox probe to {{ $labels.instance }} failed"
