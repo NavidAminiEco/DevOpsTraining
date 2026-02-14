@@ -47,6 +47,6 @@ services:
 
 networks:
   prometheus_localprom:
-    external: true  # ✅ Correct place for external flag
+    external: true  
 
 
